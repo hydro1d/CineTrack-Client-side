@@ -4,6 +4,7 @@ import { Navbar } from './components/Navbar';
 import { MovieCard } from './components/MovieCard';
 import { AddMovieModal } from './components/AddMovieModal';
 import { ConfirmDeleteModal } from './components/ConfirmDeleteModal';
+import { LoadingSkeleton } from './components/LoadingSkeleton';
 import { useMovies } from './hooks/useMovies';
 
 function App() {
@@ -56,7 +57,7 @@ function App() {
         </div>
 
         {loading ? (
-          <div className="text-white text-center">Loading...</div>
+          <LoadingSkeleton />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {filteredMovies.map(movie => (
