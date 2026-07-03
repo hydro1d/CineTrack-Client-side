@@ -10,6 +10,10 @@ function App() {
   const [search, setSearch] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
+  const filteredMovies = movies.filter(movie => 
+    movie.title.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <Toaster position="bottom-right" />
@@ -21,7 +25,7 @@ function App() {
           <div className="text-white text-center">Loading...</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {movies.map(movie => (
+            {filteredMovies.map(movie => (
               <MovieCard
                 key={movie.id}
                 movie={movie}
