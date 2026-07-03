@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
+import { Toaster } from 'react-hot-toast';
 import { Navbar } from './components/Navbar';
 import { MovieCard } from './components/MovieCard';
+import { AddMovieModal } from './components/AddMovieModal';
 import { useMovies } from './hooks/useMovies';
 
 function App() {
   const { movies, loading, addMovie, toggleWatched, deleteMovie } = useMovies();
   const [search, setSearch] = useState('');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar search={search} setSearch={setSearch} onOpenAddModal={() => alert('open modal')} />
+      <Toaster position="bottom-right" />
+      <Navbar search={search} setSearch={setSearch} onOpenAddModal={() => setIsAddModalOpen(true)} />
+      
       <main className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold text-white mb-6">Trending Watchlist</h1>
         {loading ? (
@@ -27,6 +32,12 @@ function App() {
           </div>
         )}
       </main>
+
+      <AddMovieModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAddMovie={addMovie}
+      />
     </div>
   );
 }
