@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Navbar } from './components/Navbar';
+import { HeroSection } from './components/HeroSection';
 import { MovieCard } from './components/MovieCard';
 import { AddMovieModal } from './components/AddMovieModal';
 import { ConfirmDeleteModal } from './components/ConfirmDeleteModal';
 import { LoadingSkeleton } from './components/LoadingSkeleton';
 import { useMovies } from './hooks/useMovies';
+import { AnimatePresence, motion } from 'framer-motion';
 
 function App() {
   const { movies, loading, addMovie, toggleWatched, deleteMovie } = useMovies();
@@ -13,6 +15,11 @@ function App() {
   const [filter, setFilter] = useState('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [movieToDelete, setMovieToDelete] = useState(null);
+
+  // Statistics calculation
+  const totalMovies = movies.length;
+  const watchedMovies = movies.filter(m => m.watched).length;
+  const unwatchedMovies = totalMovies - watchedMovies;
 
   const filteredMovies = movies.filter(movie => {
     const matchesSearch = movie.title.toLowerCase().includes(search.toLowerCase());
@@ -37,7 +44,13 @@ function App() {
       <Toaster position="bottom-right" />
       <Navbar search={search} setSearch={setSearch} onOpenAddModal={() => setIsAddModalOpen(true)} />
       
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <HeroSection
+          totalMovies={totalMovies}
+          watchedMovies={watchedMovies}
+          unwatchedMovies={unwatchedMovies}
+        />
+
         <div className="flex items-center justify-between border-b border-white/5 pb-4 mb-8">
           <div className="flex gap-2">
             {['all', 'watched', 'unwatched'].map(f => (
@@ -59,16 +72,18 @@ function App() {
         {loading ? (
           <LoadingSkeleton />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredMovies.map(movie => (
-              <MovieCard
-                key={movie.id}
-                movie={movie}
-                onToggleWatched={toggleWatched}
-                onDeleteClick={handleDeleteClick}
-              />
-            ))}
-          </div>
+          <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <AnimatePresence mode="popLayout">
+              {filteredMovies.map(movie => (
+                <MovieCard
+                  key={movie.id}
+                  movie={movie}
+                  onToggleWatched={toggleWatched}
+                  onDeleteClick={handleDeleteClick}
+                />
+              ))}
+            </AnimatePresence>
+          </motion.div>
         )}
       </main>
 
