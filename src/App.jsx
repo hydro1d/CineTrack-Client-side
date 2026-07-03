@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import { Navbar } from './components/Navbar';
 import { MovieCard } from './components/MovieCard';
 import { AddMovieModal } from './components/AddMovieModal';
+import { ConfirmDeleteModal } from './components/ConfirmDeleteModal';
 import { useMovies } from './hooks/useMovies';
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [movieToDelete, setMovieToDelete] = useState(null);
 
   const filteredMovies = movies.filter(movie => {
     const matchesSearch = movie.title.toLowerCase().includes(search.toLowerCase());
@@ -17,6 +19,17 @@ function App() {
     if (filter === 'unwatched') return matchesSearch && !movie.watched;
     return matchesSearch;
   });
+
+  const handleDeleteClick = (movie) => {
+    setMovieToDelete(movie);
+  };
+
+  const handleConfirmDelete = () => {
+    if (movieToDelete) {
+      deleteMovie(movieToDelete.id);
+      setMovieToDelete(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -51,7 +64,7 @@ function App() {
                 key={movie.id}
                 movie={movie}
                 onToggleWatched={toggleWatched}
-                onDeleteClick={deleteMovie}
+                onDeleteClick={handleDeleteClick}
               />
             ))}
           </div>
@@ -62,6 +75,13 @@ function App() {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onAddMovie={addMovie}
+      />
+
+      <ConfirmDeleteModal
+        isOpen={!!movieToDelete}
+        onClose={() => setMovieToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        movieTitle={movieToDelete?.title || ''}
       />
     </div>
   );
